@@ -6,13 +6,32 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		073638B32D98AE7C007D87A8 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 073638B22D98AE7C007D87A8 /* KeyboardShortcuts */; };
+		078FC7E32D98BAEB00E3ADC1 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 078FC7E22D98BAEB00E3ADC1 /* Defaults */; };
+		078FC7E52D98BAEB00E3ADC1 /* DefaultsMacros in Frameworks */ = {isa = PBXBuildFile; productRef = 078FC7E42D98BAEB00E3ADC1 /* DefaultsMacros */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		070461242D973BA90003EAD9 /* knot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = knot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		07AC61CF2D97CD2200B2CD11 /* Exceptions for "knot" folder in "knot" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 070461232D973BA90003EAD9 /* knot */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		070461262D973BA90003EAD9 /* knot */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				07AC61CF2D97CD2200B2CD11 /* Exceptions for "knot" folder in "knot" target */,
+			);
 			path = knot;
 			sourceTree = "<group>";
 		};
@@ -23,6 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				078FC7E52D98BAEB00E3ADC1 /* DefaultsMacros in Frameworks */,
+				078FC7E32D98BAEB00E3ADC1 /* Defaults in Frameworks */,
+				073638B32D98AE7C007D87A8 /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +87,9 @@
 			);
 			name = knot;
 			packageProductDependencies = (
+				073638B22D98AE7C007D87A8 /* KeyboardShortcuts */,
+				078FC7E22D98BAEB00E3ADC1 /* Defaults */,
+				078FC7E42D98BAEB00E3ADC1 /* DefaultsMacros */,
 			);
 			productName = knot;
 			productReference = 070461242D973BA90003EAD9 /* knot.app */;
@@ -94,6 +119,10 @@
 			);
 			mainGroup = 0704611B2D973BA90003EAD9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				073638B12D98AE7C007D87A8 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				078FC7E12D98BAEB00E3ADC1 /* XCRemoteSwiftPackageReference "Defaults" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 070461252D973BA90003EAD9 /* Products */;
 			projectDirPath = "";
@@ -252,6 +281,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = knot/Info.plist;
+				INFOPLIST_KEY_LSUIElement = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -291,6 +322,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = knot/Info.plist;
+				INFOPLIST_KEY_LSUIElement = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -339,6 +372,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		073638B12D98AE7C007D87A8 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.0;
+			};
+		};
+		078FC7E12D98BAEB00E3ADC1 /* XCRemoteSwiftPackageReference "Defaults" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/Defaults";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		073638B22D98AE7C007D87A8 /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 073638B12D98AE7C007D87A8 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+		078FC7E22D98BAEB00E3ADC1 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 078FC7E12D98BAEB00E3ADC1 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
+		};
+		078FC7E42D98BAEB00E3ADC1 /* DefaultsMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 078FC7E12D98BAEB00E3ADC1 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = DefaultsMacros;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0704611C2D973BA90003EAD9 /* Project object */;
 }
