@@ -13,6 +13,7 @@ class NotesWindow: NSPanel {
     private var statusBar: NSView?
     private var statusField: NSTextField?
     private var autosaveTimer: Timer?
+    private var trackingArea: NSTrackingArea?
     
     convenience init() {
         self.init(
@@ -31,7 +32,7 @@ class NotesWindow: NSPanel {
         // Configure titlebar
         self.titlebarAppearsTransparent = true
         self.titlebarSeparatorStyle = .none
-        self.titleVisibility = .hidden
+        self.titleVisibility = .visible
         self.title = "Notes"
         
         // Show above all other windows
@@ -69,14 +70,24 @@ class NotesWindow: NSPanel {
         // Setup content
         self.contentView = createContentView()
         
-        // Setup autosave timer
+        // Setup autosave
         setupAutosave()
+        
+        // Setup mouse tracking
+        setupMouseTracking()
+        
+        // Initially hide title bar
+        if let titlebarView = self.standardWindowButton(.closeButton)?.superview {
+            titlebarView.alphaValue = 0.0
+        }
     }
     
     deinit {
         colorObserver?.invalidate()
         autosaveTimer?.invalidate()
-        // saveNoteContent()
+        if let trackingArea = trackingArea {
+            contentView?.removeTrackingArea(trackingArea)
+        }
     }
     
     private func setupAutosave() {
@@ -248,6 +259,32 @@ class NotesWindow: NSPanel {
         updateStatusBar()
         
         return containerView
+    }
+    
+    private func setupMouseTracking() {
+        let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .inVisibleRect]
+        trackingArea = NSTrackingArea(rect: .zero, options: options, owner: self, userInfo: nil)
+        contentView?.addTrackingArea(trackingArea!)
+    }
+    
+    override func mouseEntered(with event: NSEvent) {
+        if let titlebarView = self.standardWindowButton(.closeButton)?.superview {
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = 0.2
+                context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                titlebarView.animator().alphaValue = 1.0
+            }
+        }
+    }
+    
+    override func mouseExited(with event: NSEvent) {
+        if let titlebarView = self.standardWindowButton(.closeButton)?.superview {
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = 0.2
+                context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                titlebarView.animator().alphaValue = 0.0
+            }
+        }
     }
 }
 
