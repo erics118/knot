@@ -1,7 +1,7 @@
 import Cocoa
 import Defaults
 
-class EditableTextView: NSTextView {    
+class EditableTextView: NSTextView {
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
         let modifierFlags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
         
@@ -66,35 +66,5 @@ class EditableTextView: NSTextView {
         }
         
         return super.performKeyEquivalent(with: event)
-    }
-}
-
-extension KnotApp {
-    func createNotesView(frame: NSRect) -> NSScrollView {
-        let scrollView = NSScrollView(frame: frame)
-        scrollView.autoresizingMask = [.width, .height]
-        scrollView.wantsLayer = true
-        scrollView.drawsBackground = false
-        
-        let textView = EditableTextView(frame: scrollView.bounds)
-        textView.isRichText = false
-        textView.autoresizingMask = [.width, .height]
-        textView.font = NSFont.monospacedSystemFont(ofSize: 12, weight: .regular)
-        textView.drawsBackground = false
-        textView.isEditable = true
-        textView.isSelectable = true
-        textView.wantsLayer = true
-        
-        // Enable undo
-        textView.allowsUndo = true
-        
-        textView.string = Defaults[.noteContent]
-        
-        scrollView.documentView = textView
-        scrollView.hasVerticalScroller = true
-        scrollView.hasHorizontalScroller = false
-        scrollView.borderType = .noBorder
-        
-        return scrollView
     }
 }

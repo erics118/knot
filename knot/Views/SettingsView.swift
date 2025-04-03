@@ -5,7 +5,6 @@ import SwiftUI
 struct GeneralSettingsView: View {
     @Default(.shortcutBehavior) var shortcutBehavior
     @Default(.color) var color
-    @Default(.padding) var padding
     
     var body: some View {
         Form {
@@ -20,8 +19,6 @@ struct GeneralSettingsView: View {
             
             ColorPicker("Background Color:", selection: $color)
             
-            TextField("Padding:", value: $padding, formatter: NumberFormatter())
-                .textFieldStyle(.roundedBorder)
         }
         .scenePadding()
     }
