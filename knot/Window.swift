@@ -33,8 +33,8 @@ class NotesWindow: NSPanel {
         self.titlebarAppearsTransparent = true
         self.titlebarSeparatorStyle = .none
         self.titleVisibility = .visible
-        self.title = "Notes"
-        
+        // self.title = Defaults[.noteContent].components(separatedBy: .newlines).first ?? "Notes"
+
         // Show above all other windows
         self.level = .floating
         
@@ -69,6 +69,9 @@ class NotesWindow: NSPanel {
         
         // Setup content
         self.contentView = createContentView()
+        
+        // Setup title
+        updateWindowTitle()
         
         // Setup autosave
         setupAutosave()
@@ -221,7 +224,14 @@ class NotesWindow: NSPanel {
     
     @objc private func textDidChange() {
         updateStatusBar()
+        updateWindowTitle()
         // saveNoteContent()
+    }
+    
+    private func updateWindowTitle() {
+        guard let text = textView?.string else { return }
+        let firstLine = text.components(separatedBy: .newlines).first ?? ""
+        self.title = firstLine.isEmpty ? "Notes" : firstLine
     }
     
     private func createContentView() -> NSView {
