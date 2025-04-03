@@ -6,6 +6,7 @@ class NotesWindow: NSPanel {
     override var canBecomeMain: Bool { false }
     
     private var colorObserver: Defaults.Observation?
+    private var closeWindowButtonObserver: Defaults.Observation?
     private var backgroundView: NSView?
     private var notesView: NSScrollView?
     private var textView: NSTextView?
@@ -20,6 +21,7 @@ class NotesWindow: NSPanel {
                 .nonactivatingPanel,
                 .resizable,
                 .titled,
+                .closable,
                 .fullSizeContentView,
             ],
             backing: .buffered,
@@ -44,7 +46,9 @@ class NotesWindow: NSPanel {
         // Hide window buttons
         self.standardWindowButton(.zoomButton)?.isHidden = true
         self.standardWindowButton(.miniaturizeButton)?.isHidden = true
-        self.standardWindowButton(.closeButton)?.isHidden = true
+        
+        // Control close button visibility based on preference
+        self.standardWindowButton(.closeButton)?.isHidden = !Defaults[.showCloseButton]
         
         // Save window position
         self.setFrameAutosaveName("NotesWindow")
@@ -55,6 +59,11 @@ class NotesWindow: NSPanel {
         // Observe color changes
         self.colorObserver = Defaults.observe(.color) { [weak self] change in
             self?.backgroundView?.layer?.backgroundColor = change.newValue.cgColor
+        }
+        
+        // Observe close button preference changes
+        self.closeWindowButtonObserver = Defaults.observe(.showCloseButton) { [weak self] change in
+            self?.standardWindowButton(.closeButton)?.isHidden = !change.newValue
         }
         
         // Setup content

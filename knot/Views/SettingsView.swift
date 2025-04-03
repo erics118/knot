@@ -5,6 +5,7 @@ import SwiftUI
 struct GeneralSettingsView: View {
     @Default(.shortcutBehavior) var shortcutBehavior
     @Default(.color) var color
+    @Default(.showCloseButton) var showCloseButton
     
     var body: some View {
         Form {
@@ -18,6 +19,8 @@ struct GeneralSettingsView: View {
             .pickerStyle(.radioGroup)
             
             ColorPicker("Background Color:", selection: $color)
+            
+            Toggle("Show Close Window Button", isOn: $showCloseButton)
             
         }
         .scenePadding()

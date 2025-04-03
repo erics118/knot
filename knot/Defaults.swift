@@ -12,6 +12,7 @@ extension Defaults.Keys {
     
     static let shortcutBehavior = Key<ShortcutBehavior>("shortcutBehavior", default: ShortcutBehavior.focusAndHide)
     static let showCharacterCount = Key<Bool>("showCharacterCount", default: true)
+    static let showCloseButton = Key<Bool>("showCloseButton", default: true)
 }
 
 extension KeyboardShortcuts.Name {
