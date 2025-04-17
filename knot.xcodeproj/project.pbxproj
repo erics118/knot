@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0710906C2DB0AA30003DFB2B /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 0710906B2DB0AA30003DFB2B /* Markdown */; };
 		073638B32D98AE7C007D87A8 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 073638B22D98AE7C007D87A8 /* KeyboardShortcuts */; };
 		078FC7E32D98BAEB00E3ADC1 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = 078FC7E22D98BAEB00E3ADC1 /* Defaults */; };
 		078FC7E52D98BAEB00E3ADC1 /* DefaultsMacros in Frameworks */ = {isa = PBXBuildFile; productRef = 078FC7E42D98BAEB00E3ADC1 /* DefaultsMacros */; };
@@ -45,6 +46,7 @@
 				078FC7E52D98BAEB00E3ADC1 /* DefaultsMacros in Frameworks */,
 				078FC7E32D98BAEB00E3ADC1 /* Defaults in Frameworks */,
 				073638B32D98AE7C007D87A8 /* KeyboardShortcuts in Frameworks */,
+				0710906C2DB0AA30003DFB2B /* Markdown in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +92,7 @@
 				073638B22D98AE7C007D87A8 /* KeyboardShortcuts */,
 				078FC7E22D98BAEB00E3ADC1 /* Defaults */,
 				078FC7E42D98BAEB00E3ADC1 /* DefaultsMacros */,
+				0710906B2DB0AA30003DFB2B /* Markdown */,
 			);
 			productName = knot;
 			productReference = 070461242D973BA90003EAD9 /* knot.app */;
@@ -122,6 +125,7 @@
 			packageReferences = (
 				073638B12D98AE7C007D87A8 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 				078FC7E12D98BAEB00E3ADC1 /* XCRemoteSwiftPackageReference "Defaults" */,
+				0710906A2DB0AA30003DFB2B /* XCRemoteSwiftPackageReference "swift-markdown" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 070461252D973BA90003EAD9 /* Products */;
@@ -382,6 +386,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0710906A2DB0AA30003DFB2B /* XCRemoteSwiftPackageReference "swift-markdown" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftlang/swift-markdown.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.6.0;
+			};
+		};
 		073638B12D98AE7C007D87A8 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
@@ -401,6 +413,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0710906B2DB0AA30003DFB2B /* Markdown */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0710906A2DB0AA30003DFB2B /* XCRemoteSwiftPackageReference "swift-markdown" */;
+			productName = Markdown;
+		};
 		073638B22D98AE7C007D87A8 /* KeyboardShortcuts */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 073638B12D98AE7C007D87A8 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
