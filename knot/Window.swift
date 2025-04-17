@@ -6,12 +6,16 @@ class NotesWindow: NSPanel {
     override var canBecomeMain: Bool { false }
     
     private var colorObserver: Defaults.Observation?
-    private var closeWindowButtonObserver: Defaults.Observation?
+    private var closeButtonObserver: Defaults.Observation?
+    private var titleBarBehaviorObserver: Defaults.Observation?
+    private var titleBarObserver: Defaults.Observation?
+    
     private var backgroundView: NSView?
     private var notesView: NSScrollView?
     private var textView: NSTextView?
     private var statusBar: NSView?
     private var statusField: NSTextField?
+//    private var noteTabs: [NSButton] = []
     private var autosaveTimer: Timer?
     private var trackingArea: NSTrackingArea?
     
@@ -32,9 +36,10 @@ class NotesWindow: NSPanel {
         // Configure titlebar
         self.titlebarAppearsTransparent = true
         self.titlebarSeparatorStyle = .none
-        self.titleVisibility = .visible
-        // self.title = Defaults[.noteContent].components(separatedBy: .newlines).first ?? "Notes"
-
+        
+        // Set initial title bar opacity
+        updateTitleBarOpacity()
+        
         // Show above all other windows
         self.level = .floating
         
@@ -43,13 +48,7 @@ class NotesWindow: NSPanel {
         
         // Flag as partially transparent
         self.isOpaque = false
-        
-        // Hide window buttons
-        self.standardWindowButton(.zoomButton)?.isHidden = true
-        self.standardWindowButton(.miniaturizeButton)?.isHidden = true
-        
-        // Control close button visibility based on preference
-        self.standardWindowButton(.closeButton)?.isHidden = !Defaults[.showCloseButton]
+
         
         // Save window position
         self.setFrameAutosaveName("NotesWindow")
@@ -63,12 +62,26 @@ class NotesWindow: NSPanel {
         }
         
         // Observe close button preference changes
-        self.closeWindowButtonObserver = Defaults.observe(.showCloseButton) { [weak self] change in
+        self.closeButtonObserver = Defaults.observe(.showCloseButton) { [weak self] change in
             self?.standardWindowButton(.closeButton)?.isHidden = !change.newValue
+        }
+        
+        self.titleBarBehaviorObserver = Defaults.observe(.titleBarBehavior) { [weak self] change in
+            self?.updateTitleBarOpacity()
+        }
+        
+        self.titleBarObserver = Defaults.observe(.showTitle) { [weak self] change in
+            self?.updateTitleVisibility()
         }
         
         // Setup content
         self.contentView = createContentView()
+        
+        // Load note content
+        loadCurrentNote()
+        
+        // TODO: onstartup, the selected tab isnt shown as green, even though the code runs
+        updateNoteTabs()
         
         // Setup title
         updateWindowTitle()
@@ -80,29 +93,31 @@ class NotesWindow: NSPanel {
         setupMouseTracking()
         
         // Initially hide title bar
-        if let titlebarView = self.standardWindowButton(.closeButton)?.superview {
-            titlebarView.alphaValue = 0.0
-        }
+        
     }
     
-    deinit {
-        colorObserver?.invalidate()
-        autosaveTimer?.invalidate()
-        if let trackingArea = trackingArea {
-            contentView?.removeTrackingArea(trackingArea)
-        }
-    }
+//    deinit {
+//        colorObserver?.invalidate()
+//        autosaveTimer?.invalidate()
+//        titleBarBehaviorObserver?.invalidate()
+//        titleBarBehaviorObserver?.invalidate()
+//        if let trackingArea = trackingArea {
+//            contentView?.removeTrackingArea(trackingArea)
+//        }
+//    }
     
     private func setupAutosave() {
         // Save every 30 seconds
         autosaveTimer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { [weak self] _ in
-            self?.saveNoteContent()
+            self?.saveCurrentNote()
         }
     }
     
-    public func saveNoteContent() {
+    public func saveCurrentNote() {
         guard let text = textView?.string else { return }
-        Defaults[.noteContent] = text
+        var notes = Defaults[.notes]
+        notes[Defaults[.currentNoteIndex]] = text
+        Defaults[.notes] = notes
     }
     
     private func createBlurView(frame: NSRect) -> NSVisualEffectView {
@@ -127,7 +142,7 @@ class NotesWindow: NSPanel {
     private func createStatusBar(frame: NSRect) -> NSView {
         let container = NSView(frame: frame)
         container.wantsLayer = true
-        container.autoresizingMask = [.width, .height]
+        container.autoresizingMask = [.width, .minYMargin]
         
         // Status text field
         let statusField = NSTextField(frame: container.bounds)
@@ -139,7 +154,7 @@ class NotesWindow: NSPanel {
         statusField.alignment = .center
         statusField.autoresizingMask = [.width, .height]
         container.addSubview(statusField)
-        
+
         // Create a button to handle clicks
         let button = NSButton(frame: container.bounds)
         button.bezelStyle = .regularSquare
@@ -157,9 +172,48 @@ class NotesWindow: NSPanel {
         return container
     }
     
+    
     @objc private func toggleStatusBar() {
         Defaults[.showCharacterCount].toggle()
         updateStatusBar()
+    }
+    
+    @objc private func switchNote(_ sender: NSButton) {
+        switchToNote(sender.tag)
+    }
+    
+    func switchToNote(_ newIndex: Int) {
+        if newIndex != Defaults[.currentNoteIndex] {
+            // Save current note
+            saveCurrentNote()
+            
+            // Switch to new note
+            Defaults[.currentNoteIndex] = newIndex
+            
+            // Update UI
+            updateNoteTabs()
+            
+            // Load the note
+            loadCurrentNote()
+        }
+    }
+    
+    private func updateNoteTabs() {
+//        print("updating note tabs")
+//        for (index, button) in noteTabs.enumerated() {
+//            if index == Defaults[.currentNoteIndex] {
+//                print("set \(index) to green")
+//                button.layer?.backgroundColor = NSColor.green.cgColor
+//            } else {
+//                button.layer?.backgroundColor = NSColor.clear.cgColor
+//            }
+//        }
+    }
+    
+    private func loadCurrentNote() {
+        textView?.string = Defaults[.notes][Defaults[.currentNoteIndex]]
+        updateStatusBar()
+        updateWindowTitle()
     }
     
     private func updateStatusBar() {
@@ -200,7 +254,6 @@ class NotesWindow: NSPanel {
             height: 0
         )
         
-        textView.string = Defaults[.noteContent]
         textView.insertionPointColor = .green
         textView.usesAdaptiveColorMappingForDarkAppearance = true
         
@@ -225,13 +278,12 @@ class NotesWindow: NSPanel {
     @objc private func textDidChange() {
         updateStatusBar()
         updateWindowTitle()
-        // saveNoteContent()
     }
     
     private func updateWindowTitle() {
         guard let text = textView?.string else { return }
         let firstLine = text.components(separatedBy: .newlines).first ?? ""
-        self.title = firstLine.isEmpty ? "Notes" : firstLine
+        self.title = "[\(Defaults[.currentNoteIndex])]" + (firstLine.isEmpty ? "Note \(Defaults[.currentNoteIndex] + 1)" : firstLine)
     }
     
     private func createContentView() -> NSView {
@@ -277,24 +329,45 @@ class NotesWindow: NSPanel {
         contentView?.addTrackingArea(trackingArea!)
     }
     
-    override func mouseEntered(with event: NSEvent) {
+    private func updateTitleBarOpacity() {
         if let titlebarView = self.standardWindowButton(.closeButton)?.superview {
-            NSAnimationContext.runAnimationGroup { context in
-                context.duration = 0.2
-                context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                titlebarView.animator().alphaValue = 1.0
+            switch Defaults[.titleBarBehavior] {
+            case .always:
+                titlebarView.alphaValue = 1.0
+            case .onHover:
+                titlebarView.alphaValue = 0.0
+            case .never:
+                titlebarView.alphaValue = 0.0
+            }
+        }
+    }
+    
+    override func mouseEntered(with event: NSEvent) {
+        if Defaults[.titleBarBehavior] == .onHover {
+            if let titlebarView = self.standardWindowButton(.closeButton)?.superview {
+                NSAnimationContext.runAnimationGroup { context in
+                    context.duration = 0.2
+                    context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                    titlebarView.animator().alphaValue = 1.0
+                }
             }
         }
     }
     
     override func mouseExited(with event: NSEvent) {
-        if let titlebarView = self.standardWindowButton(.closeButton)?.superview {
-            NSAnimationContext.runAnimationGroup { context in
-                context.duration = 0.2
-                context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                titlebarView.animator().alphaValue = 0.0
+        if Defaults[.titleBarBehavior] == .onHover {
+            if let titlebarView = self.standardWindowButton(.closeButton)?.superview {
+                NSAnimationContext.runAnimationGroup { context in
+                    context.duration = 0.2
+                    context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                    titlebarView.animator().alphaValue = 0.0
+                }
             }
         }
+    }
+    
+    private func updateTitleVisibility() {
+        self.titleVisibility = Defaults[.showTitle] ? .visible : .hidden
     }
 }
 

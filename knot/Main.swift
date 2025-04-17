@@ -13,8 +13,8 @@ class KnotApp: NSObject, NSApplicationDelegate {
     }
     
     func applicationWillTerminate(_ notification: Notification) {
-        // Save note content before quitting
-        window.saveNoteContent()
+        // Save current note before quitting
+        window.saveCurrentNote()
     }
 }
 

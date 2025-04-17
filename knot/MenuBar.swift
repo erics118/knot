@@ -25,6 +25,7 @@ extension KnotApp {
             action: #selector(openSettings),
             keyEquivalent: ","
         )
+        settingsMenuItem.keyEquivalentModifierMask = .command
         
         appMenu.addItem(settingsMenuItem)
         
