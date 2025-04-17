@@ -29,7 +29,30 @@ class EditableTextView: NSTextView {
             case 0x1D:  // Cmd+Y (Redo)
                 undoManager?.redo()
                 return true
+            case 0x21:  // Cmd+[ (Previous Note)
+                if let window = window as? NotesWindow {
+                    let currentIndex = Defaults[.currentNoteIndex]
+                    let newIndex = (currentIndex - 1 + 5) % 5
+                    window.switchToNote(newIndex)
+                }
+                return true
+            case 0x1E:  // Cmd+] (Next Note)
+                if let window = window as? NotesWindow {
+                    let currentIndex = Defaults[.currentNoteIndex]
+                    let newIndex = (currentIndex + 1) % 5
+                    window.switchToNote(newIndex)
+                }
+                return true
             default:
+                // Handle Cmd+1 through Cmd+9
+                if let keyChar = event.characters?.first,
+                   let number = Int(String(keyChar)),
+                   number >= 1 && number <= 5 {
+                    if let window = window as? NotesWindow {
+                        window.switchToNote(number - 1)
+                    }
+                    return true
+                }
                 return false
             }
         }
