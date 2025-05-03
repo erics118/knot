@@ -25,7 +25,7 @@ extension Defaults.Keys {
     static let showCharacterCount = Key<Bool>("showCharacterCount", default: true)
     static let showCloseButton = Key<Bool>("showCloseButton", default: true)
     static let showMinimizeButton = Key<Bool>("showMinimizeButton", default: true)
-    static let showMaximizeButton = Key<Bool>("showMaximizeButton", default: true)
+    static let showZoomButton = Key<Bool>("showZoomButton", default: true)
     static let showTitle = Key<Bool>("showTitle", default: true)
     
     static let titleBarBehavior = Key<TitleBarBehavior>("titleBarBehavior", default: .onHover)

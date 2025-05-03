@@ -7,6 +7,8 @@ class NotesWindow: NSPanel {
     
     private var colorObserver: Defaults.Observation?
     private var closeButtonObserver: Defaults.Observation?
+    private var minimizeButtonObserver: Defaults.Observation?
+    private var zoomButtonObserver: Defaults.Observation?
     private var titleBarBehaviorObserver: Defaults.Observation?
     private var titleBarObserver: Defaults.Observation?
     
@@ -64,6 +66,15 @@ class NotesWindow: NSPanel {
         // Observe close button preference changes
         self.closeButtonObserver = Defaults.observe(.showCloseButton) { [weak self] change in
             self?.standardWindowButton(.closeButton)?.isHidden = !change.newValue
+        }
+        
+        // Observe close button preference changes
+        self.minimizeButtonObserver = Defaults.observe(.showMinimizeButton) { [weak self] change in
+            self?.standardWindowButton(.miniaturizeButton)?.isHidden = !change.newValue
+        }
+        // Observe close button preference changes
+        self.zoomButtonObserver = Defaults.observe(.showZoomButton) { [weak self] change in
+            self?.standardWindowButton(.zoomButton)?.isHidden = !change.newValue
         }
         
         self.titleBarBehaviorObserver = Defaults.observe(.titleBarBehavior) { [weak self] change in
