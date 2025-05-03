@@ -302,22 +302,33 @@ class NotesWindow: NSPanel {
         // Add a background color
         let backgroundView = createBackgroundView(frame: containerView.bounds)
         containerView.addSubview(backgroundView)
+
+        // Main vertical stack view
+        let mainStackView = NSStackView()
+        mainStackView.orientation = .vertical
+        mainStackView.spacing = 0
+        mainStackView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(mainStackView)
+
+        NSLayoutConstraint.activate([
+            mainStackView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            mainStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            mainStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            mainStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
+
+        let statusBarHeight: CGFloat = 25
         
-        let statusBarHeight: CGFloat = 30
-        // Add scrollable text view
-        let notesView = createNotesView(frame: containerView.bounds)
-        containerView.addSubview(notesView)
+        let statusBar = createStatusBar(frame: NSRect(x: 0, y: 0, width: containerView.bounds.width, height: statusBarHeight))
+        statusBar.heightAnchor.constraint(equalToConstant: statusBarHeight).isActive = true
         
-        // Add status bar
-        let statusBarFrame = NSRect(
-            x: 0,
-            y: 0,
-            width: containerView.bounds.width,
-            height: statusBarHeight
-        )
-        let statusBar = createStatusBar(frame: statusBarFrame)
-        statusBar.frame.origin.y = (statusBarHeight - statusBar.frame.height - 10) / 2
-        containerView.addSubview(statusBar)
+        // Scrollable text view
+        let notesView = createNotesView(frame: .zero)
+        
+        mainStackView.addArrangedSubview(notesView)
+        mainStackView.addArrangedSubview(statusBar)
+        
+        statusBar.widthAnchor.constraint(equalTo: mainStackView.widthAnchor).isActive = true
         
         // Initial status update
         updateStatusBar()
@@ -379,22 +390,7 @@ class NotesWindow: NSPanel {
         guard let statusBar = self.statusBar, let notesView = self.notesView else { return }
 
         let shouldShow = Defaults[.showStatusBar]
-        let statusBarHeight: CGFloat = 30
-
         statusBar.isHidden = !shouldShow
-
-        // Adjust notesView frame based on status bar visibility
-        if shouldShow {
-            notesView.frame = contentView?.bounds.insetBy(dx: 0, dy: statusBarHeight) ?? .zero
-        } else {
-            notesView.frame = contentView?.bounds ?? .zero
-        }
-
-        // Ensure the text view adjusts its layout
-        textView?.frame = notesView.bounds
-        // Recalculate layout if needed (might not be strictly necessary depending on autoresizing)
-        notesView.needsLayout = true
-        notesView.layoutSubtreeIfNeeded()
     }
 }
 
