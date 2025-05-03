@@ -42,13 +42,21 @@ extension KnotApp {
     }
     
     fileprivate func toggleWindowVisibility() {
-        if window.isKeyWindow {
-            window.orderOut(nil)
-        } else {
-            window.makeKeyAndOrderFront(nil)
+        switch Defaults[.shortcutBehavior]  {
+        case .focusAndHide:
+            if window.isKeyWindow {
+                window.orderOut(nil)
+            } else {
+                window.makeKeyAndOrderFront(nil)
+            }
+        case .showAndHide:
+            if window.isVisible {
+                window.orderOut(nil)
+            } else {
+                window.makeKeyAndOrderFront(nil)
+            }
         }
     }
-    
     
     func setupKeyboardShortcuts() {
         checkAccessibilityPermissions()
