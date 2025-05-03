@@ -11,13 +11,14 @@ class NotesWindow: NSPanel {
     private var zoomButtonObserver: Defaults.Observation?
     private var titleBarBehaviorObserver: Defaults.Observation?
     private var titleBarObserver: Defaults.Observation?
+    private var statusBarVisibilityObserver: Defaults.Observation?
     
     private var backgroundView: NSView?
     private var notesView: NSScrollView?
     private var textView: NSTextView?
     private var statusBar: NSView?
     private var statusField: NSTextField?
-//    private var noteTabs: [NSButton] = []
+    //private var noteTabs: [NSButton] = []
     private var autosaveTimer: Timer?
     private var trackingArea: NSTrackingArea?
     
@@ -50,7 +51,7 @@ class NotesWindow: NSPanel {
         
         // Flag as partially transparent
         self.isOpaque = false
-
+        
         
         // Save window position
         self.setFrameAutosaveName("NotesWindow")
@@ -85,6 +86,11 @@ class NotesWindow: NSPanel {
             self?.updateTitleVisibility()
         }
         
+        // Observe status bar visibility preference changes
+        self.statusBarVisibilityObserver = Defaults.observe(.showStatusBar) { [weak self] _ in
+            self?.updateStatusBarVisibility()
+        }
+        
         // Setup content
         self.contentView = createContentView()
         
@@ -102,20 +108,8 @@ class NotesWindow: NSPanel {
         
         // Setup mouse tracking
         setupMouseTracking()
-        
-        // Initially hide title bar
-        
     }
     
-//    deinit {
-//        colorObserver?.invalidate()
-//        autosaveTimer?.invalidate()
-//        titleBarBehaviorObserver?.invalidate()
-//        titleBarBehaviorObserver?.invalidate()
-//        if let trackingArea = trackingArea {
-//            contentView?.removeTrackingArea(trackingArea)
-//        }
-//    }
     
     private func setupAutosave() {
         // Save every 30 seconds
@@ -165,7 +159,7 @@ class NotesWindow: NSPanel {
         statusField.alignment = .center
         statusField.autoresizingMask = [.width, .height]
         container.addSubview(statusField)
-
+        
         // Create a button to handle clicks
         let button = NSButton(frame: container.bounds)
         button.bezelStyle = .regularSquare
@@ -210,15 +204,15 @@ class NotesWindow: NSPanel {
     }
     
     private func updateNoteTabs() {
-//        print("updating note tabs")
-//        for (index, button) in noteTabs.enumerated() {
-//            if index == Defaults[.currentNoteIndex] {
-//                print("set \(index) to green")
-//                button.layer?.backgroundColor = NSColor.green.cgColor
-//            } else {
-//                button.layer?.backgroundColor = NSColor.clear.cgColor
-//            }
-//        }
+        //print("updating note tabs")
+        //for (index, button) in noteTabs.enumerated() {
+        //    if index == Defaults[.currentNoteIndex] {
+        //        print("set \(index) to green")
+        //        button.layer?.backgroundColor = NSColor.green.cgColor
+        //    } else {
+        //        button.layer?.backgroundColor = NSColor.clear.cgColor
+        //    }
+        //}
     }
     
     private func loadCurrentNote() {
@@ -311,10 +305,7 @@ class NotesWindow: NSPanel {
         
         let statusBarHeight: CGFloat = 30
         // Add scrollable text view
-        let notesView = createNotesView(frame: containerView.bounds.insetBy(
-            dx: 0,
-            dy: statusBarHeight
-        ))
+        let notesView = createNotesView(frame: containerView.bounds)
         containerView.addSubview(notesView)
         
         // Add status bar
@@ -330,6 +321,9 @@ class NotesWindow: NSPanel {
         
         // Initial status update
         updateStatusBar()
+        
+        // Initial visibility update
+        updateStatusBarVisibility()
         
         return containerView
     }
@@ -379,6 +373,28 @@ class NotesWindow: NSPanel {
     
     private func updateTitleVisibility() {
         self.titleVisibility = Defaults[.showTitle] ? .visible : .hidden
+    }
+    
+    private func updateStatusBarVisibility() {
+        guard let statusBar = self.statusBar, let notesView = self.notesView else { return }
+
+        let shouldShow = Defaults[.showStatusBar]
+        let statusBarHeight: CGFloat = 30
+
+        statusBar.isHidden = !shouldShow
+
+        // Adjust notesView frame based on status bar visibility
+        if shouldShow {
+            notesView.frame = contentView?.bounds.insetBy(dx: 0, dy: statusBarHeight) ?? .zero
+        } else {
+            notesView.frame = contentView?.bounds ?? .zero
+        }
+
+        // Ensure the text view adjusts its layout
+        textView?.frame = notesView.bounds
+        // Recalculate layout if needed (might not be strictly necessary depending on autoresizing)
+        notesView.needsLayout = true
+        notesView.layoutSubtreeIfNeeded()
     }
 }
 

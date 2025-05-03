@@ -26,7 +26,6 @@ extension KnotApp {
             keyEquivalent: ","
         )
         settingsMenuItem.keyEquivalentModifierMask = .command
-        
         appMenu.addItem(settingsMenuItem)
         
         // Quit Menu Item
@@ -35,6 +34,7 @@ extension KnotApp {
             action: #selector(NSApplication.terminate(_:)),
             keyEquivalent: "q"
         )
+        quitMenuItem.keyEquivalentModifierMask = .command
         appMenu.addItem(quitMenuItem)
         
         NSApp.mainMenu = mainMenu

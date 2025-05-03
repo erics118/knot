@@ -12,6 +12,7 @@ struct GeneralSettingsView: View {
     @Default(.showZoomButton) var showZoomButton
     @Default(.showTitle) var showTitle
     @Default(.titleBarBehavior) var titleBarBehavior
+    @Default(.showStatusBar) var showStatusBar
     
     var body: some View {
         Form {
@@ -37,6 +38,8 @@ struct GeneralSettingsView: View {
                     Text(behavior.displayName).tag(behavior)
                 }
             }
+            
+            Toggle("Show Status Bar", isOn: $showStatusBar)
         }
         .scenePadding()
     }
@@ -62,13 +65,13 @@ class SettingsWindowController: NSWindowController {
             defer: false
         )
         window.title = "knot Settings"
-
+        
         let settingsView = SettingsView()
         let hostingController = NSHostingController(rootView: settingsView)
-
+        
         // Set content view controller
         window.contentViewController = hostingController
-
+        
         // Size window to fit content
         window.setContentSize(hostingController.view.fittingSize)
         
@@ -91,17 +94,17 @@ class SettingsWindowController: NSWindowController {
 }
 
 struct SettingsView: View {
-//    @Default(.selectedTab) var selectedTab
+    //    @Default(.selectedTab) var selectedTab
     
     var body: some View {
-//        TabView(selection: $selectedTab) {
-//            Tab("General", systemImage: "gear", value: 0 ) {
-//                GeneralSettingsView()
-//            }
-//            Tab("Appearance", systemImage: "paintpalette", value: 1) {
-//                AppearanceSettingsView()
-//            }
-//        }
+        //TabView(selection: $selectedTab) {
+        //    Tab("General", systemImage: "gear", value: 0 ) {
+        //        GeneralSettingsView()
+        //    }
+        //    Tab("Appearance", systemImage: "paintpalette", value: 1) {
+        //        AppearanceSettingsView()
+        //    }
+        //}
         GeneralSettingsView()
     }
 }

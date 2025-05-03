@@ -32,7 +32,8 @@ extension Defaults.Keys {
     
     static let notes = Key<[String]>("notes", default: [])
     static let currentNoteIndex = Key<Int>("currentNoteIndex", default: 0)
-
+    
+    static let showStatusBar = Key<Bool>("showStatusBar", default: true)
 }
 
 extension KeyboardShortcuts.Name {
