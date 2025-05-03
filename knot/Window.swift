@@ -373,10 +373,15 @@ class NotesWindow: NSPanel {
         switch Defaults[.statusBarBehavior] {
         case .always:
             statusBar.alphaValue = 1.0
+            // statusBar.isHidden = false
         case .onHover:
+            // Start hidden and transparent for hover
             statusBar.alphaValue = 0.0
+            // statusBar.isHidden = true
         case .never:
+            // Stay hidden and transparent
             statusBar.alphaValue = 0.0
+            // statusBar.isHidden = true
         }
     }
     
@@ -388,6 +393,7 @@ class NotesWindow: NSPanel {
                     context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
                     titlebarView.animator().alphaValue = 1.0
                     titlePaddingView?.animator().alphaValue = 1.0
+
                 }
             }
         }
