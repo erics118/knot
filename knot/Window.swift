@@ -17,7 +17,8 @@ class NotesWindow: NSPanel {
     private var notesView: NSScrollView?
     private var textView: NSTextView?
     private var statusBar: NSView?
-    private var statusField: NSTextField?
+    private var statusButton: NSButton?
+    private var titlePaddingView: NSView?
     //private var noteTabs: [NSButton] = []
     private var autosaveTimer: Timer?
     private var trackingArea: NSTrackingArea?
@@ -149,30 +150,22 @@ class NotesWindow: NSPanel {
         container.wantsLayer = true
         container.autoresizingMask = [.width, .minYMargin]
         
-        // Status text field
-        let statusField = NSTextField(frame: container.bounds)
-        statusField.isEditable = false
-        statusField.isBordered = false
-        statusField.drawsBackground = false
-        statusField.textColor = .tertiaryLabelColor
-        statusField.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
-        statusField.alignment = .center
-        statusField.autoresizingMask = [.width, .height]
-        container.addSubview(statusField)
-        
-        // Create a button to handle clicks
-        let button = NSButton(frame: container.bounds)
-        button.bezelStyle = .regularSquare
-        button.isBordered = false
-        button.title = ""
-        button.target = self
-        button.action = #selector(toggleStatusBar)
-        button.autoresizingMask = [.width, .height]
-        container.addSubview(button)
+        // Create a button to handle clicks and display status
+        let statusButton = NSButton(frame: container.bounds)
+        statusButton.bezelStyle = .regularSquare
+        statusButton.isBordered = false
+        statusButton.title = ""
+        statusButton.target = self
+        statusButton.action = #selector(toggleStatusBar)
+        statusButton.autoresizingMask = [.width, .height]
+        statusButton.alignment = .center
+        statusButton.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
+        statusButton.contentTintColor = .tertiaryLabelColor
+        container.addSubview(statusButton)
         
         // Store references
         self.statusBar = container
-        self.statusField = statusField
+        self.statusButton = statusButton
         
         return container
     }
@@ -228,10 +221,10 @@ class NotesWindow: NSPanel {
         
         if Defaults[.showCharacterCount] {
             let characterString = charCount == 1 ? "character" : "characters"
-            statusField?.stringValue = "\(charCount) \(characterString)"
+            statusButton?.title = "\(charCount) \(characterString)"
         } else {
             let wordString = wordCount == 1 ? "word" : "words"
-            statusField?.stringValue = "\(wordCount) \(wordString)"
+            statusButton?.title = "\(wordCount) \(wordString)"
         }
     }
     
@@ -308,6 +301,7 @@ class NotesWindow: NSPanel {
         mainStackView.orientation = .vertical
         mainStackView.spacing = 0
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
+        mainStackView.distribution = .fill
         containerView.addSubview(mainStackView)
 
         NSLayoutConstraint.activate([
@@ -317,18 +311,29 @@ class NotesWindow: NSPanel {
             mainStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ])
 
-        let statusBarHeight: CGFloat = 25
+        // Title padding view
+        let titlePaddingView = NSView()
+        titlePaddingView.translatesAutoresizingMaskIntoConstraints = false
+        titlePaddingView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        titlePaddingView.wantsLayer = true
+        self.titlePaddingView = titlePaddingView
+        
+        let statusBarHeight: CGFloat = 30
         
         let statusBar = createStatusBar(frame: NSRect(x: 0, y: 0, width: containerView.bounds.width, height: statusBarHeight))
         statusBar.heightAnchor.constraint(equalToConstant: statusBarHeight).isActive = true
         
         // Scrollable text view
         let notesView = createNotesView(frame: .zero)
+        notesView.translatesAutoresizingMaskIntoConstraints = false
         
+        // Add views to stack view in order: title padding, notes content, status bar
+        mainStackView.addArrangedSubview(titlePaddingView)
         mainStackView.addArrangedSubview(notesView)
         mainStackView.addArrangedSubview(statusBar)
         
         statusBar.widthAnchor.constraint(equalTo: mainStackView.widthAnchor).isActive = true
+        notesView.widthAnchor.constraint(equalTo: mainStackView.widthAnchor).isActive = true
         
         // Initial status update
         updateStatusBar()
@@ -350,10 +355,13 @@ class NotesWindow: NSPanel {
             switch Defaults[.titleBarBehavior] {
             case .always:
                 titlebarView.alphaValue = 1.0
+                titlePaddingView?.alphaValue = 1.0
             case .onHover:
                 titlebarView.alphaValue = 0.0
+                titlePaddingView?.alphaValue = 0.0
             case .never:
                 titlebarView.alphaValue = 0.0
+                titlePaddingView?.alphaValue = 0.0
             }
         }
     }
@@ -365,6 +373,7 @@ class NotesWindow: NSPanel {
                     context.duration = 0.2
                     context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
                     titlebarView.animator().alphaValue = 1.0
+                    titlePaddingView?.animator().alphaValue = 1.0
                 }
             }
         }
@@ -377,6 +386,7 @@ class NotesWindow: NSPanel {
                     context.duration = 0.2
                     context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
                     titlebarView.animator().alphaValue = 0.0
+                    titlePaddingView?.animator().alphaValue = 0.0
                 }
             }
         }
@@ -387,10 +397,9 @@ class NotesWindow: NSPanel {
     }
     
     private func updateStatusBarVisibility() {
-        guard let statusBar = self.statusBar, let notesView = self.notesView else { return }
+        guard let statusBar = self.statusBar else { return }
 
-        let shouldShow = Defaults[.showStatusBar]
-        statusBar.isHidden = !shouldShow
+        statusBar.isHidden = !Defaults[.showStatusBar]
     }
 }
 
