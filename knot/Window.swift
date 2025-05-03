@@ -12,6 +12,7 @@ class NotesWindow: NSPanel {
     private var titleBarBehaviorObserver: Defaults.Observation?
     private var titleBarObserver: Defaults.Observation?
     private var statusBarVisibilityObserver: Defaults.Observation?
+    private var statusBarBehaviorObserver: Defaults.Observation?
     
     private var backgroundView: NSView?
     private var notesView: NSScrollView?
@@ -87,9 +88,9 @@ class NotesWindow: NSPanel {
             self?.updateTitleVisibility()
         }
         
-        // Observe status bar visibility preference changes
-        self.statusBarVisibilityObserver = Defaults.observe(.showStatusBar) { [weak self] _ in
-            self?.updateStatusBarVisibility()
+        // Observe status bar behavior preference changes
+        self.statusBarBehaviorObserver = Defaults.observe(.statusBarBehavior) { [weak self] _ in
+            self?.updateStatusBarOpacity()
         }
         
         // Setup content
@@ -366,6 +367,19 @@ class NotesWindow: NSPanel {
         }
     }
     
+    private func updateStatusBarOpacity() {
+        guard let statusBar = self.statusBar else { return }
+        
+        switch Defaults[.statusBarBehavior] {
+        case .always:
+            statusBar.alphaValue = 1.0
+        case .onHover:
+            statusBar.alphaValue = 0.0
+        case .never:
+            statusBar.alphaValue = 0.0
+        }
+    }
+    
     override func mouseEntered(with event: NSEvent) {
         if Defaults[.titleBarBehavior] == .onHover {
             if let titlebarView = self.standardWindowButton(.closeButton)?.superview {
@@ -374,6 +388,16 @@ class NotesWindow: NSPanel {
                     context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
                     titlebarView.animator().alphaValue = 1.0
                     titlePaddingView?.animator().alphaValue = 1.0
+                }
+            }
+        }
+        
+        if Defaults[.statusBarBehavior] == .onHover {
+            if let statusBar = self.statusBar {
+                NSAnimationContext.runAnimationGroup { context in
+                    context.duration = 0.2
+                    context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                    statusBar.animator().alphaValue = 1.0
                 }
             }
         }
@@ -390,6 +414,16 @@ class NotesWindow: NSPanel {
                 }
             }
         }
+        
+        if Defaults[.statusBarBehavior] == .onHover {
+            if let statusBar = self.statusBar {
+                NSAnimationContext.runAnimationGroup { context in
+                    context.duration = 0.2
+                    context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                    statusBar.animator().alphaValue = 0.0
+                }
+            }
+        }
     }
     
     private func updateTitleVisibility() {
@@ -397,9 +431,7 @@ class NotesWindow: NSPanel {
     }
     
     private func updateStatusBarVisibility() {
-        guard let statusBar = self.statusBar else { return }
-
-        statusBar.isHidden = !Defaults[.showStatusBar]
+        updateStatusBarOpacity()
     }
 }
 

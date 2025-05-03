@@ -13,6 +13,7 @@ struct GeneralSettingsView: View {
     @Default(.showTitle) var showTitle
     @Default(.titleBarBehavior) var titleBarBehavior
     @Default(.showStatusBar) var showStatusBar
+    @Default(.statusBarBehavior) var statusBarBehavior
     
     var body: some View {
         Form {
@@ -39,7 +40,11 @@ struct GeneralSettingsView: View {
                 }
             }
             
-            Toggle("Show Status Bar", isOn: $showStatusBar)
+            Picker("Show Status Bar:", selection: $statusBarBehavior) {
+                ForEach(StatusBarBehavior.allCases, id: \.self) { behavior in
+                    Text(behavior.displayName).tag(behavior)
+                }
+            }
         }
         .scenePadding()
     }
