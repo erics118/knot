@@ -276,7 +276,7 @@ class NotesWindow: NSPanel {
     private func updateWindowTitle() {
         guard let text = textView?.string else { return }
         let firstLine = text.components(separatedBy: .newlines).first ?? ""
-        self.title = "[\(Defaults[.currentNoteIndex])]" + (firstLine.isEmpty ? "Note \(Defaults[.currentNoteIndex] + 1)" : firstLine)
+        self.title = "[\(Defaults[.currentNoteIndex])] " + (firstLine.isEmpty ? "Note \(Defaults[.currentNoteIndex] + 1)" : firstLine)
     }
     
     private func createContentView() -> NSView {
