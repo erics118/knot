@@ -1,4 +1,4 @@
-import Cocoa
+import AppKit
 import KeyboardShortcuts
 import Defaults
 

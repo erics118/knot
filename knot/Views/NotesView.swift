@@ -1,5 +1,6 @@
 import SwiftUI
 import Defaults
+import AppKit
 
 struct NotesView: View {
     @StateObject private var viewModel = NotesViewModel.shared

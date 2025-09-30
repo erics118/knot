@@ -20,10 +20,6 @@ struct KnotApp: App {
                 .keyboardShortcut(",", modifiers: .command)
             }
         }
-        
-        Settings {
-            SettingsView()
-        }
     }
 }
 

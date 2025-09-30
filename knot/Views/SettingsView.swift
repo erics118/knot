@@ -1,6 +1,7 @@
 import Defaults
 import KeyboardShortcuts
 import SwiftUI
+import AppKit
 
 struct GeneralSettingsView: View {
     @Default(.shortcutBehavior) var shortcutBehavior

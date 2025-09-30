@@ -1,4 +1,4 @@
-import Cocoa
+import AppKit
 import SwiftUI
 import Defaults
 import KeyboardShortcuts
