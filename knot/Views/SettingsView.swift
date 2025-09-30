@@ -8,8 +8,6 @@ struct GeneralSettingsView: View {
     @Default(.shortcutBehavior) var shortcutBehavior
     @Default(.color) var color
     @Default(.showCloseButton) var showCloseButton
-    @Default(.showMinimizeButton) var showMinimizeButton
-    @Default(.showZoomButton) var showZoomButton
     @Default(.showTitle) var showTitle
     @Default(.titleBarBehavior) var titleBarBehavior
     @Default(.showStatusBar) var showStatusBar
@@ -29,8 +27,6 @@ struct GeneralSettingsView: View {
             ColorPicker("Background Color:", selection: $color)
             
             Toggle("Show Close Window Button", isOn: $showCloseButton)
-            Toggle("Show Minimize Window Button", isOn: $showMinimizeButton)
-            Toggle("Show Zoom Window Button", isOn: $showZoomButton)
             
             Toggle("Show Window Title", isOn: $showTitle)
             
