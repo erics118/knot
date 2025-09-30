@@ -1,30 +1,61 @@
-import Cocoa
+import SwiftUI
 import Defaults
 
-class KnotApp: NSObject, NSApplicationDelegate {
-    var window: NotesWindow!
+@main
+struct KnotApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
+    var body: some Scene {
+        WindowGroup {
+            NotesView()
+                .frame(minWidth: 400, minHeight: 200)
+        }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
+        .commands {
+            CommandGroup(replacing: .appSettings) {
+                Button("Settings") {
+                    appDelegate.openSettings()
+                }
+                .keyboardShortcut(",", modifiers: .command)
+            }
+        }
+        
+        Settings {
+            SettingsView()
+        }
+    }
+}
+
+class AppDelegate: NSObject, NSApplicationDelegate {
     var settingsWindowController: SettingsWindowController?
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        setupWindow()
+        NSApp.setActivationPolicy(.accessory)
         setupKeyboardShortcuts()
-        setupMenuBar()
+        configureWindows()
     }
     
     func applicationWillTerminate(_ notification: Notification) {
         // Save current note before quitting
-        window.saveCurrentNote()
+        NotesViewModel.shared.saveCurrentNote()
     }
-}
-
-@main
-class Main {
-    static func main() {
-        let app = NSApplication.shared
-        app.setActivationPolicy(.accessory)
-        let delegate = KnotApp()
-        app.delegate = delegate
-        app.run()
+    
+    private func configureWindows() {
+        // Configure all windows to be floating panels
+        for window in NSApp.windows {
+            if window.title != "knot Settings" {
+                window.level = .floating
+                window.collectionBehavior = .canJoinAllSpaces
+            }
+        }
+    }
+    
+    func openSettings() {
+        if settingsWindowController == nil {
+            settingsWindowController = SettingsWindowController()
+        }
+        settingsWindowController?.showWindow(nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
 }

@@ -1,8 +1,6 @@
 import Defaults
 import KeyboardShortcuts
 import SwiftUI
-import Cocoa
-import AppKit
 
 struct GeneralSettingsView: View {
     @Default(.shortcutBehavior) var shortcutBehavior
@@ -27,6 +25,9 @@ struct GeneralSettingsView: View {
             ColorPicker("Background Color:", selection: $color)
             
             Toggle("Show Close Window Button", isOn: $showCloseButton)
+                .onChange(of: showCloseButton) { _, newValue in
+                    updateWindowButtons()
+                }
             
             Toggle("Show Window Title", isOn: $showTitle)
             
@@ -44,16 +45,17 @@ struct GeneralSettingsView: View {
         }
         .scenePadding()
     }
+    
+    private func updateWindowButtons() {
+        DispatchQueue.main.async {
+            for window in NSApp.windows {
+                if window.title != "knot Settings" {
+                    window.standardWindowButton(.closeButton)?.isHidden = !showCloseButton
+                }
+            }
+        }
+    }
 }
-
-//struct AppearanceSettingsView: View {
-//    var body: some View {
-//        Form {
-//        }
-//        .scenePadding()
-//    }
-//}
-
 
 class SettingsWindowController: NSWindowController {
     private var hostingController: NSHostingController<SettingsView>?
@@ -95,17 +97,7 @@ class SettingsWindowController: NSWindowController {
 }
 
 struct SettingsView: View {
-    //    @Default(.selectedTab) var selectedTab
-    
     var body: some View {
-        //TabView(selection: $selectedTab) {
-        //    Tab("General", systemImage: "gear", value: 0 ) {
-        //        GeneralSettingsView()
-        //    }
-        //    Tab("Appearance", systemImage: "paintpalette", value: 1) {
-        //        AppearanceSettingsView()
-        //    }
-        //}
         GeneralSettingsView()
     }
 }

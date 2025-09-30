@@ -18,7 +18,7 @@ enum ShortcutBehavior: String, Hashable, Codable, Defaults.Serializable, CaseIte
     }
 }
 
-extension KnotApp {
+extension AppDelegate {
     fileprivate func checkAccessibilityPermissions() {
         let checkOptPrompt = kAXTrustedCheckOptionPrompt.takeRetainedValue() as NSString
         let options = [checkOptPrompt: true]
@@ -42,7 +42,9 @@ extension KnotApp {
     }
     
     fileprivate func toggleWindowVisibility() {
-        switch Defaults[.shortcutBehavior]  {
+        guard let window = NSApp.windows.first(where: { $0.contentView != nil && $0.title != "knot Settings" }) else { return }
+        
+        switch Defaults[.shortcutBehavior] {
         case .focusAndHide:
             if window.isKeyWindow {
                 window.orderOut(nil)
