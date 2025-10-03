@@ -3,8 +3,10 @@ import Defaults
 
 class EditableTextView: NSTextView {
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
-        let modifierFlags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-        
+        let modifierFlags = event.modifierFlags.intersection(
+            .deviceIndependentFlagsMask
+        )
+
         // Command key shortcuts
         if modifierFlags == .command {
             switch event.keyCode {
@@ -46,8 +48,9 @@ class EditableTextView: NSTextView {
             default:
                 // Handle Cmd+1 through Cmd+9
                 if let keyChar = event.characters?.first,
-                   let number = Int(String(keyChar)),
-                   number >= 1 && number <= 5 {
+                    let number = Int(String(keyChar)),
+                    number >= 1 && number <= 5
+                {
                     if let window = window as? NotesWindow {
                         window.switchToNote(number - 1)
                     }
@@ -56,7 +59,7 @@ class EditableTextView: NSTextView {
                 return false
             }
         }
-        
+
         // Command + Shift key shortcuts
         if modifierFlags == [.command, .shift] {
             switch event.keyCode {
@@ -73,7 +76,7 @@ class EditableTextView: NSTextView {
                 return false
             }
         }
-        
+
         // Command + Option key shortcuts
         if modifierFlags == [.command, .option] {
             switch event.keyCode {
@@ -87,7 +90,7 @@ class EditableTextView: NSTextView {
                 return false
             }
         }
-        
+
         return super.performKeyEquivalent(with: event)
     }
 }

@@ -8,17 +8,17 @@ extension KnotApp {
         settingsWindowController?.showWindow(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
-    
+
     func setupMenuBar() {
         let mainMenu = NSMenu()
-        
+
         // App Menu
         let appMenuItem = NSMenuItem()
         mainMenu.addItem(appMenuItem)
-        
+
         let appMenu = NSMenu()
         appMenuItem.submenu = appMenu
-        
+
         // Settings Menu Item
         let settingsMenuItem = NSMenuItem(
             title: "Settings",
@@ -27,7 +27,7 @@ extension KnotApp {
         )
         settingsMenuItem.keyEquivalentModifierMask = .command
         appMenu.addItem(settingsMenuItem)
-        
+
         // Quit Menu Item
         let quitMenuItem = NSMenuItem(
             title: "Quit",
@@ -36,7 +36,7 @@ extension KnotApp {
         )
         quitMenuItem.keyEquivalentModifierMask = .command
         appMenu.addItem(quitMenuItem)
-        
+
         NSApp.mainMenu = mainMenu
     }
 }

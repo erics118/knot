@@ -1,13 +1,15 @@
 import Cocoa
-import KeyboardShortcuts
 import Defaults
+import KeyboardShortcuts
 
-enum ShortcutBehavior: String, Hashable, Codable, Defaults.Serializable, CaseIterable, Identifiable {
+enum ShortcutBehavior: String, Hashable, Codable, Defaults.Serializable,
+    CaseIterable, Identifiable
+{
     case focusAndHide
     case showAndHide
-    
+
     var id: String { self.rawValue }
-    
+
     var displayName: String {
         switch self {
         case .focusAndHide:
@@ -20,29 +22,37 @@ enum ShortcutBehavior: String, Hashable, Codable, Defaults.Serializable, CaseIte
 
 extension KnotApp {
     fileprivate func checkAccessibilityPermissions() {
-        let checkOptPrompt = kAXTrustedCheckOptionPrompt.takeRetainedValue() as NSString
+        let checkOptPrompt =
+            kAXTrustedCheckOptionPrompt.takeRetainedValue() as NSString
         let options = [checkOptPrompt: true]
-        
-        let accessEnabled = AXIsProcessTrustedWithOptions(options as CFDictionary?)
-        
+
+        let accessEnabled = AXIsProcessTrustedWithOptions(
+            options as CFDictionary?
+        )
+
         if !accessEnabled {
             let alert = NSAlert()
             alert.messageText = "Accessibility Permissions Required"
-            alert.informativeText = "Please enable accessibility permissions in System Preferences to use global shortcuts."
+            alert.informativeText =
+                "Please enable accessibility permissions in System Preferences to use global shortcuts."
             alert.alertStyle = .warning
             alert.addButton(withTitle: "Open System Preferences")
             alert.addButton(withTitle: "Cancel")
-            
+
             let response = alert.runModal()
             if response == .alertFirstButtonReturn {
                 NSWorkspace.shared.open(
-                    URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
+                    URL(
+                        string:
+                            "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+                    )!
+                )
             }
         }
     }
-    
+
     fileprivate func toggleWindowVisibility() {
-        switch Defaults[.shortcutBehavior]  {
+        switch Defaults[.shortcutBehavior] {
         case .focusAndHide:
             if window.isKeyWindow {
                 window.orderOut(nil)
@@ -57,10 +67,10 @@ extension KnotApp {
             }
         }
     }
-    
+
     func setupKeyboardShortcuts() {
         checkAccessibilityPermissions()
-        
+
         KeyboardShortcuts.onKeyUp(for: .toggleFloatingNote) {
             self.toggleWindowVisibility()
         }
