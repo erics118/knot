@@ -45,14 +45,12 @@ shortcut behavior:
 
 ### background color
 
-requires a restart to update, because bugged
+you can choose a custom window background color
 
 ### title bar
 
-the following options show/hide various things in the title bar.
+the following options show/hide things in the title bar.
 - show close window button - show/hide the red traffic light button
-- show minimize window button - show/hide the yellow traffic light button
-- show zoom window button - show/hide the green traffic light button
 - show window title - shows the title of the window
 
 show title bar - has three options
