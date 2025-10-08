@@ -2,10 +2,72 @@ import Cocoa
 import Defaults
 
 class EditableTextView: NSTextView {
+    override func didChangeText() {
+        super.didChangeText()
+
+        applyHeadingBoldStyling()
+    }
+
+    func applyHeadingBoldStyling() {
+        guard let textStorage = self.textStorage else { return }
+
+        let selection = self.selectedRanges
+
+        textStorage.beginEditing()
+        defer {
+            textStorage.endEditing()
+            self.selectedRanges = selection
+        }
+
+        // reset everything to default font
+        textStorage.addAttribute(
+            .font,
+            value: NSFont.monospacedSystemFont(ofSize: 12, weight: .regular),
+            range: NSRange(location: 0, length: textStorage.length)
+        )
+
+        let boldFont = NSFont.monospacedSystemFont(ofSize: 12, weight: .bold)
+
+        let str = textStorage.string
+
+        // for each substring (ie, each line), check
+        textStorage.string.enumerateSubstrings(
+            in: str.startIndex..<str.endIndex,
+            options: [.byLines]
+        ) { _, substringRange, _, _ in
+            guard !substringRange.isEmpty else { return }
+
+            // check the first char of this line
+            guard str[substringRange].first == "#" else { return }
+            print(substringRange)
+
+            // add the bold attribute
+            textStorage.addAttribute(
+                .font,
+                value: boldFont,
+                range: NSRange(substringRange, in: textStorage.string)
+            )
+        }
+    }
+
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
         let modifierFlags = event.modifierFlags.intersection(
             .deviceIndependentFlagsMask
         )
+
+        // Helpers
+        func switchNote(_ idx: Int) {
+            guard let win = window as? NotesWindow else { return }
+            win.switchToNote(idx)
+        }
+        func prevNote() {
+            let i = Defaults[.currentNoteIndex]
+            switchNote((i - 1 + 5) % 5)
+        }
+        func nextNote() {
+            let i = Defaults[.currentNoteIndex]
+            switchNote((i + 1) % 5)
+        }
 
         // Command key shortcuts
         if modifierFlags == .command {
@@ -32,61 +94,19 @@ class EditableTextView: NSTextView {
                 undoManager?.redo()
                 return true
             case 0x21:  // Cmd+[ (Previous Note)
-                if let window = window as? NotesWindow {
-                    let currentIndex = Defaults[.currentNoteIndex]
-                    let newIndex = (currentIndex - 1 + 5) % 5
-                    window.switchToNote(newIndex)
-                }
+                prevNote()
                 return true
             case 0x1E:  // Cmd+] (Next Note)
-                if let window = window as? NotesWindow {
-                    let currentIndex = Defaults[.currentNoteIndex]
-                    let newIndex = (currentIndex + 1) % 5
-                    window.switchToNote(newIndex)
-                }
+                nextNote()
                 return true
             default:
                 // Handle Cmd+1 through Cmd+9
-                if let keyChar = event.characters?.first,
-                    let number = Int(String(keyChar)),
-                    number >= 1 && number <= 5
+                if let ch = event.charactersIgnoringModifiers?.first,
+                    let n = ch.wholeNumberValue, (1...5).contains(n)
                 {
-                    if let window = window as? NotesWindow {
-                        window.switchToNote(number - 1)
-                    }
+                    switchNote(n - 1)
                     return true
                 }
-                return false
-            }
-        }
-
-        // Command + Shift key shortcuts
-        if modifierFlags == [.command, .shift] {
-            switch event.keyCode {
-            case 0x07:  // Cmd+Shift+C (Copy Style)
-                copyFont(nil)
-                return true
-            case 0x09:  // Cmd+Shift+V (Paste Style)
-                pasteFont(nil)
-                return true
-            case 0x1B:  // Cmd+Shift+Z (Redo)
-                undoManager?.redo()
-                return true
-            default:
-                return false
-            }
-        }
-
-        // Command + Option key shortcuts
-        if modifierFlags == [.command, .option] {
-            switch event.keyCode {
-            case 0x00:  // Cmd+Option+A (Select All in Line)
-                selectLine(nil)
-                return true
-            case 0x06:  // Cmd+Option+Z (Redo)
-                undoManager?.redo()
-                return true
-            default:
                 return false
             }
         }
