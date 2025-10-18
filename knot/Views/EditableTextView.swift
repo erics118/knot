@@ -8,6 +8,24 @@ class EditableTextView: NSTextView {
         applyHeadingBoldStyling()
     }
 
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+
+        // Apply styling when the view is first displayed
+        if window != nil && !string.isEmpty {
+            applyHeadingBoldStyling()
+        }
+    }
+
+    override var string: String {
+        didSet {
+            // Apply styling when text is set programmatically
+            if !string.isEmpty {
+                applyHeadingBoldStyling()
+            }
+        }
+    }
+
     func applyHeadingBoldStyling() {
         guard let textStorage = self.textStorage else { return }
 
@@ -39,7 +57,6 @@ class EditableTextView: NSTextView {
 
             // check the first char of this line
             guard str[substringRange].first == "#" else { return }
-            print(substringRange)
 
             // add the bold attribute
             textStorage.addAttribute(
@@ -77,21 +94,36 @@ class EditableTextView: NSTextView {
                 return true
             case 0x06:  // Cmd+Z (Undo)
                 undoManager?.undo()
+                if let win = window as? NotesWindow {
+                    win.saveCurrentNote()
+                }
                 return true
             case 0x07:  // Cmd+X (Cut)
                 cut(nil)
+                // Trigger autosave after cut
+                if let win = window as? NotesWindow {
+                    win.saveCurrentNote()
+                }
                 return true
             case 0x08:  // Cmd+C (Copy)
                 copy(nil)
                 return true
             case 0x09:  // Cmd+V (Paste)
                 paste(nil)
+                // Trigger autosave after paste
+                if let win = window as? NotesWindow {
+                    win.saveCurrentNote()
+                }
                 return true
             case 0x0D:  // Cmd+W (Close Window)
                 NSApp.keyWindow?.close()
                 return true
             case 0x1D:  // Cmd+Y (Redo)
                 undoManager?.redo()
+                // Trigger autosave after redo
+                if let win = window as? NotesWindow {
+                    win.saveCurrentNote()
+                }
                 return true
             case 0x21:  // Cmd+[ (Previous Note)
                 prevNote()

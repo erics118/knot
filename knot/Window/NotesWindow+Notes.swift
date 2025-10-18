@@ -21,7 +21,7 @@ extension NotesWindow {
     func switchToNote(_ newIndex: Int) {
         if newIndex != Defaults[.currentNoteIndex] {
             saveCurrentNote()
-            Defaults[.currentNoteIndex] = newIndex % 5;
+            Defaults[.currentNoteIndex] = newIndex % 5
             loadCurrentNote()
         }
     }

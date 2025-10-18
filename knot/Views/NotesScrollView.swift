@@ -36,11 +36,8 @@ final class NotesScrollView: NSScrollView {
         editableTextView.allowsUndo = true
         editableTextView.textContainerInset = NSSize(width: 20, height: 0)
         editableTextView.insertionPointColor = .green
-//        editableTextView.usesAdaptiveColorMappingForDarkAppearance = true
-        // TODO: this doesnt properly make the headers bold, before the first appearance of it.
-        editableTextView.applyHeadingBoldStyling();
-    
-        
+        //        editableTextView.usesAdaptiveColorMappingForDarkAppearance = true
+
         documentView = editableTextView
         hasVerticalScroller = true
         hasHorizontalScroller = false
