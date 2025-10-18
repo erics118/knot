@@ -4,13 +4,14 @@ import Defaults
 final class StatusBarView: NSView {
     var statusBarBehaviorObserver: Defaults.Observation?
 
+    var charCount: Int = 0
+    var wordCount: Int = 0
+
     func setTitle(_ title: String) {
         statusButton.title = title
     }
 
-    func updateCount(from text: String) {
-        let charCount = text.count
-        let wordCount = text.split { $0.isWhitespace || $0.isNewline }.count
+    func updateText() {
         if Defaults[.showCharacterCount] {
             let characterString = charCount == 1 ? "character" : "characters"
             setTitle("\(charCount) \(characterString)")
@@ -20,18 +21,11 @@ final class StatusBarView: NSView {
         }
     }
 
-    func applyOpacityBehavior() {
-        switch Defaults[.statusBarBehavior] {
-        case .always:
-            alphaValue = 1.0
-        case .onHover:
-            alphaValue = 0.0
-        case .never:
-            alphaValue = 0.0
-        }
+    func updateCount(from text: String) {
+        charCount = text.count
+        wordCount = text.split { $0.isWhitespace || $0.isNewline }.count
+        updateText()
     }
-
-    var onToggle: (() -> Void)?
 
     private let statusButton: NSButton
 
@@ -64,13 +58,13 @@ final class StatusBarView: NSView {
         statusButton.translatesAutoresizingMaskIntoConstraints = true
         addSubview(statusButton)
 
-        statusBarBehaviorObserver = Defaults.observe(.statusBarBehavior) {
+        statusBarBehaviorObserver = Defaults.observe(.showCharacterCount) {
             [weak self] _ in
-            self?.applyOpacityBehavior()
+            self?.updateText()
         }
     }
 
     @objc private func handleToggle() {
-        onToggle?()
+        Defaults[.showCharacterCount].toggle()
     }
 }
