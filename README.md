@@ -1,6 +1,8 @@
 # knot
 
-simple notes app
+a simple notes app
+
+![Screenshot of the app](./img.png)
 
 ## features
 
