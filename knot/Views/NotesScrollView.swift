@@ -24,7 +24,12 @@ final class NotesScrollView: NSScrollView {
 
         // TODO: move everything here to the constructor of EditableTextView
         editableTextView.isRichText = false
-        editableTextView.autoresizingMask = [.width, .height]
+        editableTextView.autoresizingMask = .width
+        editableTextView.isVerticallyResizable = true
+        editableTextView.maxSize = NSSize(
+            width: CGFloat.greatestFiniteMagnitude,
+            height: CGFloat.greatestFiniteMagnitude
+        )
         editableTextView.font = NSFont.monospacedSystemFont(
             ofSize: 12,
             weight: .regular
