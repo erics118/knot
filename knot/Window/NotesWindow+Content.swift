@@ -72,8 +72,6 @@ extension NotesWindow {
             equalTo: mainStackView.widthAnchor
         ).isActive = true
 
-        updateStatusBar()
-
         return containerView
     }
 }

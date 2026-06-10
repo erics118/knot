@@ -17,18 +17,7 @@ extension NotesWindow {
 
     override public func mouseEntered(with event: NSEvent) {
         if Defaults[.titleBarBehavior] == .onHover {
-            if let titlebarView = self.standardWindowButton(.closeButton)?
-                .superview
-            {
-                NSAnimationContext.runAnimationGroup { context in
-                    context.duration = 0.2
-                    context.timingFunction = CAMediaTimingFunction(
-                        name: .easeInEaseOut
-                    )
-                    titlebarView.animator().alphaValue = 1.0
-                    titlePaddingView?.animator().alphaValue = 1.0
-                }
-            }
+            setTitleBarAlpha(1.0, animated: true)
         }
 
         if Defaults[.statusBarBehavior] == .onHover {
@@ -46,18 +35,7 @@ extension NotesWindow {
 
     override public func mouseExited(with event: NSEvent) {
         if Defaults[.titleBarBehavior] == .onHover {
-            if let titlebarView = self.standardWindowButton(.closeButton)?
-                .superview
-            {
-                NSAnimationContext.runAnimationGroup { context in
-                    context.duration = 0.2
-                    context.timingFunction = CAMediaTimingFunction(
-                        name: .easeInEaseOut
-                    )
-                    titlebarView.animator().alphaValue = 0.0
-                    titlePaddingView?.animator().alphaValue = 0.0
-                }
-            }
+            setTitleBarAlpha(0.0, animated: true)
         }
 
         if Defaults[.statusBarBehavior] == .onHover {

@@ -30,13 +30,13 @@ struct GeneralSettingsView: View {
             Toggle("Show Window Title", isOn: $showTitle)
 
             Picker("Show Title Bar:", selection: $titleBarBehavior) {
-                ForEach(TitleBarBehavior.allCases, id: \.self) { behavior in
+                ForEach(VisibilityBehavior.allCases, id: \.self) { behavior in
                     Text(behavior.displayName).tag(behavior)
                 }
             }
 
             Picker("Show Status Bar:", selection: $statusBarBehavior) {
-                ForEach(StatusBarBehavior.allCases, id: \.self) { behavior in
+                ForEach(VisibilityBehavior.allCases, id: \.self) { behavior in
                     Text(behavior.displayName).tag(behavior)
                 }
             }

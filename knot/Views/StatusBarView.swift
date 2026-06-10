@@ -2,7 +2,7 @@ import Cocoa
 import Defaults
 
 final class StatusBarView: NSView {
-    var statusBarBehaviorObserver: Defaults.Observation?
+    var showCharacterCountObserver: Defaults.Observation?
 
     var charCount: Int = 0
     var wordCount: Int = 0
@@ -58,7 +58,7 @@ final class StatusBarView: NSView {
         statusButton.translatesAutoresizingMaskIntoConstraints = true
         addSubview(statusButton)
 
-        statusBarBehaviorObserver = Defaults.observe(.showCharacterCount) {
+        showCharacterCountObserver = Defaults.observe(.showCharacterCount) {
             [weak self] _ in
             self?.updateText()
         }

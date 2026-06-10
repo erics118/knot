@@ -23,9 +23,9 @@ extension NotesWindow {
             forName: NSText.didChangeNotification,
             object: nil,
             queue: .main
-        ) { notification in
-            self.updateStatusBar()
-            self.updateWindowTitle()
+        ) { [weak self] notification in
+            self?.updateStatusBar()
+            self?.updateWindowTitle()
         }
 
     }

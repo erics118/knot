@@ -3,21 +3,7 @@ import Defaults
 import KeyboardShortcuts
 import SwiftUI
 
-enum TitleBarBehavior: String, CaseIterable, Defaults.Serializable {
-    case always
-    case onHover
-    case never
-
-    var displayName: String {
-        switch self {
-        case .always: return "Always"
-        case .onHover: return "On Hover"
-        case .never: return "Never"
-        }
-    }
-}
-
-enum StatusBarBehavior: String, CaseIterable, Defaults.Serializable {
+enum VisibilityBehavior: String, CaseIterable, Defaults.Serializable {
     case always
     case onHover
     case never
@@ -54,11 +40,11 @@ extension Defaults.Keys {
     static let showCloseButton = Key<Bool>("showCloseButton", default: true)
     static let showTitle = Key<Bool>("showTitle", default: true)
 
-    static let titleBarBehavior = Key<TitleBarBehavior>(
+    static let titleBarBehavior = Key<VisibilityBehavior>(
         "titleBarBehavior",
         default: .onHover
     )
-    static let statusBarBehavior = Key<StatusBarBehavior>(
+    static let statusBarBehavior = Key<VisibilityBehavior>(
         "statusBarBehavior",
         default: .always
     )

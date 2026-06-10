@@ -2,6 +2,40 @@ import Cocoa
 import Defaults
 
 class EditableTextView: NSTextView {
+    override init(frame frameRect: NSRect, textContainer container: NSTextContainer?) {
+        super.init(frame: frameRect, textContainer: container)
+        configure()
+    }
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        configure()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        configure()
+    }
+
+    private func configure() {
+        isRichText = false
+        autoresizingMask = .width
+        isVerticallyResizable = true
+        maxSize = NSSize(
+            width: CGFloat.greatestFiniteMagnitude,
+            height: CGFloat.greatestFiniteMagnitude
+        )
+        font = NSFont.monospacedSystemFont(ofSize: 12, weight: .regular)
+        drawsBackground = false
+        isEditable = true
+        isSelectable = true
+        wantsLayer = true
+        allowsUndo = true
+        textContainerInset = NSSize(width: 20, height: 0)
+        insertionPointColor = .green
+        //        usesAdaptiveColorMappingForDarkAppearance = true
+    }
+
     override func didChangeText() {
         super.didChangeText()
 

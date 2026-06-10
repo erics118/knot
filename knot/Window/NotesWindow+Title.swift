@@ -10,19 +10,29 @@ extension NotesWindow {
     }
 
     func updateTitleBarOpacity() {
-        if let titlebarView = self.standardWindowButton(.closeButton)?.superview
-        {
-            switch Defaults[.titleBarBehavior] {
-            case .always:
-                titlebarView.alphaValue = 1.0
-                titlePaddingView?.alphaValue = 1.0
-            case .onHover:
-                titlebarView.alphaValue = 0.0
-                titlePaddingView?.alphaValue = 0.0
-            case .never:
-                titlebarView.alphaValue = 0.0
-                titlePaddingView?.alphaValue = 0.0
+        switch Defaults[.titleBarBehavior] {
+        case .always:
+            setTitleBarAlpha(1.0)
+        case .onHover, .never:
+            setTitleBarAlpha(0.0)
+        }
+    }
+
+    func setTitleBarAlpha(_ alpha: CGFloat, animated: Bool = false) {
+        guard let titlebarView = standardWindowButton(.closeButton)?.superview
+        else { return }
+        if animated {
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = 0.2
+                context.timingFunction = CAMediaTimingFunction(
+                    name: .easeInEaseOut
+                )
+                titlebarView.animator().alphaValue = alpha
+                titlePaddingView?.animator().alphaValue = alpha
             }
+        } else {
+            titlebarView.alphaValue = alpha
+            titlePaddingView?.alphaValue = alpha
         }
     }
 

@@ -17,7 +17,6 @@ class NotesWindow: NSPanel {
     var statusBarView: StatusBarView?
     var titlePaddingView: NSView?
     var autosaveTimer: Timer?
-    var autosaveTask: Task<Void, Never>?
 
     var trackingArea: NSTrackingArea?
 
