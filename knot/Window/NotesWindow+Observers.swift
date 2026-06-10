@@ -19,14 +19,21 @@ extension NotesWindow {
             self?.updateTitleVisibility()
         }
 
+        statusBarBehaviorObserver = Defaults.observe(.statusBarBehavior) {
+            [weak self] _ in
+            self?.updateStatusBarVisibility()
+        }
+
+    }
+
+    func setupTextObserver() {
         textDidChangeObserver = NotificationCenter.default.addObserver(
             forName: NSText.didChangeNotification,
-            object: nil,
+            object: textView,
             queue: .main
-        ) { [weak self] notification in
+        ) { [weak self] _ in
             self?.updateStatusBar()
             self?.updateWindowTitle()
         }
-
     }
 }

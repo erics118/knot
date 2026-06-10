@@ -152,7 +152,7 @@ class EditableTextView: NSTextView {
             case 0x0D:  // Cmd+W (Close Window)
                 NSApp.keyWindow?.close()
                 return true
-            case 0x1D:  // Cmd+Y (Redo)
+            case 0x10:  // Cmd+Y (Redo)
                 undoManager?.redo()
                 // Trigger autosave after redo
                 if let win = window as? NotesWindow {

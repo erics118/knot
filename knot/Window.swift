@@ -66,6 +66,12 @@ class NotesWindow: NSPanel {
         // Setup content
         self.contentView = createContentView()
 
+        // Setup text observer (must be after textView is created)
+        setupTextObserver()
+
+        // Set initial status bar visibility
+        updateStatusBarVisibility()
+
         // Load note content
         loadCurrentNote()
 
@@ -77,6 +83,10 @@ class NotesWindow: NSPanel {
 
         // Setup mouse tracking
         setupMouseTracking()
+    }
+
+    deinit {
+        autosaveTimer?.invalidate()
     }
 
 }
