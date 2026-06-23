@@ -37,6 +37,21 @@ extension KnotApp {
         quitMenuItem.keyEquivalentModifierMask = .command
         appMenu.addItem(quitMenuItem)
 
+        // File Menu
+        let fileMenuItem = NSMenuItem()
+        mainMenu.addItem(fileMenuItem)
+
+        let fileMenu = NSMenu(title: "File")
+        fileMenuItem.submenu = fileMenu
+
+        let closeMenuItem = NSMenuItem(
+            title: "Close Window",
+            action: #selector(NSWindow.performClose(_:)),
+            keyEquivalent: "w"
+        )
+        closeMenuItem.keyEquivalentModifierMask = .command
+        fileMenu.addItem(closeMenuItem)
+
         NSApp.mainMenu = mainMenu
     }
 }

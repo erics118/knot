@@ -1,4 +1,3 @@
-import AppKit
 import Cocoa
 import Defaults
 import KeyboardShortcuts
@@ -6,40 +5,137 @@ import SwiftUI
 
 struct GeneralSettingsView: View {
     @Default(.shortcutBehavior) var shortcutBehavior
-    @Default(.color) var color
     @Default(.showCloseButton) var showCloseButton
     @Default(.showTitle) var showTitle
+    @Default(.closeOnEscape) var closeOnEscape
     @Default(.titleBarBehavior) var titleBarBehavior
     @Default(.statusBarBehavior) var statusBarBehavior
 
     var body: some View {
         Form {
-            KeyboardShortcuts.Recorder("Shortcut:", name: .toggleFloatingNote)
+            Section("Shortcut") {
+                KeyboardShortcuts.Recorder(
+                    "Global Shortcut",
+                    name: .toggleFloatingNote
+                )
 
-            Picker("Shortcut Behavior", selection: $shortcutBehavior) {
-                ForEach(ShortcutBehavior.allCases) { opt in
-                    Text(opt.displayName).tag(opt)
-                }
-            }
-            .pickerStyle(.radioGroup)
-
-            ColorPicker("Background Color:", selection: $color)
-
-            Toggle("Show Close Window Button", isOn: $showCloseButton)
-
-            Toggle("Show Window Title", isOn: $showTitle)
-
-            Picker("Show Title Bar:", selection: $titleBarBehavior) {
-                ForEach(VisibilityBehavior.allCases, id: \.self) { behavior in
-                    Text(behavior.displayName).tag(behavior)
+                Picker("Behavior", selection: $shortcutBehavior) {
+                    ForEach(ShortcutBehavior.allCases) { option in
+                        Text(option.displayName).tag(option)
+                    }
                 }
             }
 
-            Picker("Show Status Bar:", selection: $statusBarBehavior) {
-                ForEach(VisibilityBehavior.allCases, id: \.self) { behavior in
-                    Text(behavior.displayName).tag(behavior)
+            Section("Window") {
+                Toggle("Close with Escape", isOn: $closeOnEscape)
+            }
+
+            Section("Title Bar") {
+                Picker("Visibility", selection: $titleBarBehavior) {
+                    ForEach(VisibilityBehavior.allCases, id: \.self) {
+                        behavior in
+                        Text(behavior.displayName).tag(behavior)
+                    }
+                }
+
+                LabeledContent("Show") {
+                    Toggle("Window Buttons", isOn: $showCloseButton)
+                        .toggleStyle(.button)
+                    Toggle("Title", isOn: $showTitle)
+                        .toggleStyle(.button)
                 }
             }
+
+            Section("Status Bar") {
+                Picker("Visibility", selection: $statusBarBehavior) {
+                    ForEach(VisibilityBehavior.allCases, id: \.self) {
+                        behavior in
+                        Text(behavior.displayName).tag(behavior)
+                    }
+                }
+            }
+        }
+        .formStyle(.grouped)
+    }
+}
+
+struct AppearanceSettingsView: View {
+    @Default(.color) var color
+    @Default(.fontSize) var fontSize
+    @Default(.padding) var padding
+    @Default(.textColor) var textColor
+    @Default(.linkColor) var linkColor
+    @Default(.caretColor) var caretColor
+
+    private func colorBinding(_ binding: Binding<NSColor>) -> Binding<Color> {
+        Binding(
+            get: { Color(nsColor: binding.wrappedValue) },
+            set: { binding.wrappedValue = NSColor($0) }
+        )
+    }
+
+    var body: some View {
+        Form {
+            Section("Editor") {
+                LabeledContent("Font Size") {
+                    HStack {
+                        Slider(value: $fontSize, in: 9...24, step: 1)
+                        Text("\(Int(fontSize)) pt")
+                            .monospacedDigit()
+                            .frame(width: 40, alignment: .trailing)
+                    }
+                }
+
+                LabeledContent("Horizontal Padding") {
+                    HStack {
+                        Slider(value: $padding, in: 0...60, step: 1)
+                        Text("\(Int(padding)) pt")
+                            .monospacedDigit()
+                            .frame(width: 40, alignment: .trailing)
+                    }
+                }
+
+                ColorPicker(
+                    "Text Color",
+                    selection: colorBinding($textColor),
+                    supportsOpacity: false
+                )
+                ColorPicker(
+                    "Link Color",
+                    selection: colorBinding($linkColor),
+                    supportsOpacity: false
+                )
+                ColorPicker(
+                    "Caret Color",
+                    selection: colorBinding($caretColor),
+                    supportsOpacity: false
+                )
+            }
+
+            Section("Background") {
+                ColorPicker(
+                    "Background Color and Opacity",
+                    selection: $color,
+                    supportsOpacity: true
+                )
+            }
+        }
+        .formStyle(.grouped)
+    }
+}
+
+struct SettingsView: View {
+    var body: some View {
+        TabView {
+            GeneralSettingsView()
+                .tabItem {
+                    Label("General", systemImage: "gearshape")
+                }
+
+            AppearanceSettingsView()
+                .tabItem {
+                    Label("Appearance", systemImage: "paintpalette")
+                }
         }
         .scenePadding()
     }
@@ -84,21 +180,5 @@ class SettingsWindowController: NSWindowController {
 
         // Store reference to hosting controller
         self.hostingController = hostingController
-    }
-}
-
-struct SettingsView: View {
-    //    @Default(.selectedTab) var selectedTab
-
-    var body: some View {
-        //TabView(selection: $selectedTab) {
-        //    Tab("General", systemImage: "gear", value: 0 ) {
-        //        GeneralSettingsView()
-        //    }
-        //    Tab("Appearance", systemImage: "paintpalette", value: 1) {
-        //        AppearanceSettingsView()
-        //    }
-        //}
-        GeneralSettingsView()
     }
 }

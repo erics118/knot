@@ -3,12 +3,24 @@ import Defaults
 
 final class StatusBarView: NSView {
     var showCharacterCountObserver: Defaults.Observation?
+    private var fontSizeObserver: Defaults.Observation?
+    private var textColorObserver: Defaults.Observation?
 
     var charCount: Int = 0
     var wordCount: Int = 0
 
     func setTitle(_ title: String) {
-        statusButton.title = title
+        statusButton.attributedTitle = NSAttributedString(
+            string: title,
+            attributes: [
+                .font: NSFont.monospacedSystemFont(
+                    ofSize: Defaults[.fontSize],
+                    weight: .regular
+                ),
+                .foregroundColor: Defaults[.textColor]
+                    .withAlphaComponent(0.5),
+            ]
+        )
     }
 
     func updateText() {
@@ -53,13 +65,18 @@ final class StatusBarView: NSView {
         statusButton.action = #selector(handleToggle)
         statusButton.autoresizingMask = [.width, .height]
         statusButton.alignment = .center
-        statusButton.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
-        statusButton.contentTintColor = .tertiaryLabelColor
+        updateText()
         statusButton.translatesAutoresizingMaskIntoConstraints = true
         addSubview(statusButton)
 
         showCharacterCountObserver = Defaults.observe(.showCharacterCount) {
             [weak self] _ in
+            self?.updateText()
+        }
+        fontSizeObserver = Defaults.observe(.fontSize) { [weak self] _ in
+            self?.updateText()
+        }
+        textColorObserver = Defaults.observe(.textColor) { [weak self] _ in
             self?.updateText()
         }
     }

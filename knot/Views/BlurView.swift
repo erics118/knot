@@ -1,4 +1,5 @@
 import Cocoa
+import Defaults
 
 final class BlurView: NSVisualEffectView {
     override init(frame frameRect: NSRect) {

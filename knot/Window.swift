@@ -5,6 +5,22 @@ class NotesWindow: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
 
+    override func cancelOperation(_ sender: Any?) {
+        if Defaults[.closeOnEscape] {
+            super.cancelOperation(sender)
+        }
+    }
+
+    override func orderOut(_ sender: Any?) {
+        saveCurrentNote()
+        super.orderOut(sender)
+    }
+
+    override func close() {
+        saveCurrentNote()
+        super.close()
+    }
+
     var closeButtonObserver: Defaults.Observation?
     var titleBarBehaviorObserver: Defaults.Observation?
     var titleBarObserver: Defaults.Observation?
@@ -16,7 +32,7 @@ class NotesWindow: NSPanel {
     var textView: NSTextView?
     var statusBarView: StatusBarView?
     var titlePaddingView: NSView?
-    var autosaveTimer: Timer?
+    var pendingSaveTimer: Timer?
 
     var trackingArea: NSTrackingArea?
 
@@ -38,9 +54,6 @@ class NotesWindow: NSPanel {
         self.titlebarAppearsTransparent = true
         self.titlebarSeparatorStyle = .none
 
-        // Set initial title bar opacity
-        updateTitleBarOpacity()
-
         // Show above all other windows
         self.level = .floating
 
@@ -49,6 +62,8 @@ class NotesWindow: NSPanel {
 
         // Flag as partially transparent
         self.isOpaque = false
+        self.backgroundColor = .clear
+        self.appearance = NSAppearance(named: .darkAqua)
 
         // Save window position
         self.setFrameAutosaveName("NotesWindow")
@@ -66,6 +81,12 @@ class NotesWindow: NSPanel {
         // Setup content
         self.contentView = createContentView()
 
+        // Apply the initial title-bar preferences. Defaults observers only
+        // handle subsequent changes.
+        updateCloseButtonVisibility()
+        updateTitleVisibility()
+        updateTitleBarOpacity()
+
         // Setup text observer (must be after textView is created)
         setupTextObserver()
 
@@ -78,15 +99,12 @@ class NotesWindow: NSPanel {
         // Setup title
         updateWindowTitle()
 
-        // Setup autosave
-        setupAutosave()
-
         // Setup mouse tracking
         setupMouseTracking()
     }
 
     deinit {
-        autosaveTimer?.invalidate()
+        pendingSaveTimer?.invalidate()
     }
 
 }

@@ -19,6 +19,7 @@ enum VisibilityBehavior: String, CaseIterable, Defaults.Serializable {
 
 extension Defaults.Keys {
     static let padding = Key<CGFloat>("padding", default: 20)
+    static let fontSize = Key<CGFloat>("fontSize", default: 12)
     static let color = Key<Color>(
         "color",
         default: Color(
@@ -28,6 +29,9 @@ extension Defaults.Keys {
             opacity: 0.6
         )
     )
+    static let textColor = Key<NSColor>("textColor", default: .white)
+    static let linkColor = Key<NSColor>("linkColor", default: .linkColor)
+    static let caretColor = Key<NSColor>("caretColor", default: .green)
 
     static let shortcutBehavior = Key<ShortcutBehavior>(
         "shortcutBehavior",
@@ -39,6 +43,7 @@ extension Defaults.Keys {
     )
     static let showCloseButton = Key<Bool>("showCloseButton", default: true)
     static let showTitle = Key<Bool>("showTitle", default: true)
+    static let closeOnEscape = Key<Bool>("closeOnEscape", default: false)
 
     static let titleBarBehavior = Key<VisibilityBehavior>(
         "titleBarBehavior",
@@ -51,8 +56,6 @@ extension Defaults.Keys {
 
     static let notes = Key<[String]>("notes", default: ["", "", "", "", ""])
     static let currentNoteIndex = Key<Int>("currentNoteIndex", default: 0)
-
-    static let showStatusBar = Key<Bool>("showStatusBar", default: true)
 }
 
 extension KeyboardShortcuts.Name {

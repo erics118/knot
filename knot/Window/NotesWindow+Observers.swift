@@ -4,9 +4,8 @@ import Defaults
 extension NotesWindow {
     func setupObservers() {
         closeButtonObserver = Defaults.observe(.showCloseButton) {
-            [weak self] change in
-            self?.standardWindowButton(.closeButton)?.isHidden = !change
-                .newValue
+            [weak self] _ in
+            self?.updateCloseButtonVisibility()
         }
 
         titleBarBehaviorObserver = Defaults.observe(.titleBarBehavior) {
@@ -26,6 +25,11 @@ extension NotesWindow {
 
     }
 
+    func updateCloseButtonVisibility() {
+        standardWindowButton(.closeButton)?.isHidden =
+            !Defaults[.showCloseButton]
+    }
+
     func setupTextObserver() {
         textDidChangeObserver = NotificationCenter.default.addObserver(
             forName: NSText.didChangeNotification,
@@ -34,6 +38,7 @@ extension NotesWindow {
         ) { [weak self] _ in
             self?.updateStatusBar()
             self?.updateWindowTitle()
+            self?.scheduleSave()
         }
     }
 }
